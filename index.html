@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dom Gets a Job!</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e6e0;
+      font-family: Georgia, serif;
+    }
+
+    .punch-card {
+      background: #e8e6e0;
+      padding: 2rem 2.5rem;
+      width: 600px;
+      max-width: 95vw;
+      box-sizing: border-box;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      gap: 1rem;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bird-icon {
+      font-size: 48px;
+      line-height: 1;
+    }
+
+    .title-text {
+      font-size: 28px;
+      font-weight: 400;
+      color: #3a3a3a;
+      line-height: 1.2;
+    }
+
+    .prize-info {
+      text-align: right;
+      max-width: 200px;
+    }
+
+    .prize-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #4a6a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.3;
+    }
+
+    .prize-sub {
+      font-size: 13px;
+      color: #5a5a5a;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .stars-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 8px;
+      transition: transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .star-btn:hover { transform: scale(1.08); }
+    .star-btn:active { transform: scale(0.95); }
+
+    .star-svg {
+      width: 90px;
+      height: 90px;
+      display: block;
+    }
+
+    .progress-text {
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+      margin-top: 4px;
+      font-family: Arial, sans-serif;
+    }
+
+    .prize-banner {
+      background: #dceeff;
+      border: 1px solid #a8c8f0;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      margin-top: 1rem;
+      animation: popIn 0.4s ease;
+    }
+
+    .prize-banner h3 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #185FA5;
+      margin: 0 0 4px;
+    }
+
+    .prize-banner p {
+      font-size: 14px;
+      color: #555;
+      margin: 0;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .undo-btn {
+      background: none;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: #666;
+      cursor: pointer;
+      display: block;
+      margin: 0.75rem auto 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .undo-btn:hover { background: rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+  <div class="punch-card">
+    <div class="card-header">
+      <div class="card-title">
+<div class="title-text">Dom gets a<br>job!</div>
+      </div>
+      <div class="prize-info">
+        <div class="prize-label">Apply to 10 jobs for a prize!</div>
+        <div class="prize-sub">Prize can include an item or experience</div>
+      </div>
+    </div>
+
+    <div class="stars-grid" id="starsGrid"></div>
+    <div class="progress-text" id="progressText"></div>
+
+    <div id="prizeBanner" style="display:none;" class="prize-banner">
+      <h3>🎉 Prize unlocked!</h3>
+      <p>10 applications submitted — time to collect your reward!</p>
+    </div>
+
+    <button class="undo-btn" onclick="undo()">↩ Undo last</button>
+  </div>
+
+  <script>
+    const TOTAL = 10;
+    let filled = 0;
+
+    const pts = [];
+    for (let i = 0; i < 5; i++) {
+      const outer = (Math.PI * 2 * i / 5) - Math.PI / 2;
+      const inner = outer + Math.PI / 5;
+      pts.push(`${50 + 38 * Math.cos(outer)},${50 + 38 * Math.sin(outer)}`);
+      pts.push(`${50 + 16 * Math.cos(inner)},${50 + 16 * Math.sin(inner)}`);
+    }
+    const polygon = pts.join(' ');
+
+    function makeStar(state) {
+      if (state === 'black') {
+        return `<svg class="star-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="${polygon}" fill="#2C2C2A"/>
+        </svg>`;
+      } else if (state === 'blue') {
+        return `<svg class="star-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="${polygon}" fill="#85B7EB" stroke="#378ADD" stroke-width="2"/>
+        </svg>`;
+      } else {
+        return `<svg class="star-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="${polygon}" fill="#FAC775" stroke="#BA7517" stroke-width="2" stroke-dasharray="6,3"/>
+        </svg>`;
+      }
+    }
+
+    function render() {
+      const grid = document.getElementById('starsGrid');
+      grid.innerHTML = '';
+      for (let i = 0; i < TOTAL; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'star-btn';
+        let state;
+        if (i < filled) {
+          state = (i === TOTAL - 1) ? 'blue' : 'black';
+        } else {
+          state = 'empty';
+        }
+        btn.innerHTML = makeStar(state);
+        btn.setAttribute('aria-label', i < filled
+          ? `Application ${i + 1} submitted`
+          : `Mark application ${i + 1} submitted`);
+        btn.onclick = () => { if (filled <= i) { filled = i + 1; render(); } };
+        grid.appendChild(btn);
+      }
+
+      const prog = document.getElementById('progressText');
+      prog.textContent = filled === TOTAL
+        ? '🎉 All 10 applications submitted!'
+        : `${filled} of ${TOTAL} applications submitted`;
+
+      document.getElementById('prizeBanner').style.display = filled === TOTAL ? 'block' : 'none';
+    }
+
+    function undo() { if (filled > 0) { filled--; render(); } }
+
+    render();
+  </script>
+</body>
+</html>
