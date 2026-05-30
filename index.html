@@ -175,7 +175,7 @@
 
   <script>
     const TOTAL = 10;
-    let filled = 0;
+    let filled = parseInt(localStorage.getItem('filledCount') || '0');
 
     const pts = [];
     for (let i = 0; i < 5; i++) {
@@ -203,6 +203,7 @@
     }
 
     function render() {
+      localStorage.setItem('filledCount', filled);
       const grid = document.getElementById('starsGrid');
       grid.innerHTML = '';
       for (let i = 0; i < TOTAL; i++) {
