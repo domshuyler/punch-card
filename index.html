@@ -170,12 +170,15 @@
       <p>10 applications submitted — time to collect your reward!</p>
     </div>
 
-    <button class="undo-btn" onclick="undo()">↩ Undo last</button>
+    <div style="display:flex; gap:8px; justify-content:center; margin-top:0.75rem;">
+      <button class="undo-btn" style="margin:0;" onclick="undo()">↩ Undo last</button>
+      <button class="undo-btn" style="margin:0;" id="copyBtn" onclick="copyLink()">📋 Copy link to save progress</button>
+    </div>
   </div>
 
   <script>
     const TOTAL = 10;
-    let filled = parseInt(localStorage.getItem('filledCount') || '0');
+    let filled = parseInt(new URLSearchParams(window.location.search).get('filled') || '0');
 
     const pts = [];
     for (let i = 0; i < 5; i++) {
@@ -203,7 +206,7 @@
     }
 
     function render() {
-      localStorage.setItem('filledCount', filled);
+      window.history.replaceState(null, '', '?filled=' + filled);
       const grid = document.getElementById('starsGrid');
       grid.innerHTML = '';
       for (let i = 0; i < TOTAL; i++) {
@@ -232,6 +235,15 @@
     }
 
     function undo() { if (filled > 0) { filled--; render(); } }
+
+    function copyLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = '✅ Link copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy link to save progress'; }, 2000);
+      });
+    }
 
     render();
   </script>
